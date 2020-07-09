@@ -2,12 +2,8 @@ function unique_ID() {
     return Math.random().toString(36).substr(2, 9);
 }
 
-fetch("data")
-    .then(data=>data.json())
-    .then(data=>console.log(data));
-
 const xhttp = new XMLHttpRequest();
-const id = "a5025234"
+const id = unique_ID();
 
 function eventHandler(direction, action) {
     xhttp.open("POST", "/data/" + id);
