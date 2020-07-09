@@ -92,7 +92,7 @@ function gameLoop(){
 
 function checkRewardCollision(player){
     rewards.forEach((reward, index)=>{
-        if(collisionDiamonds(player.x,player.y,reward.x,reward.y,size*3)){
+        if(collisionDiamonds(player.x,player.y,reward.x,reward.y,size, size*3)){
             player.length += 3;
             rewards.splice(index, 1);
         }
@@ -126,7 +126,7 @@ function checkPlayerCollision(player){
         }
         for (; i < other.length; i++) {
             let {x, y} = other.positions[other.positions.length-1-(i*5)] || {x: -100, y: -100};
-            if(collisionDiamonds(player.x, player.y, x,y, size)){
+            if(collisionDiamonds(player.x, player.y, x,y, size, size)){
                 collision = true
             }
         }
@@ -138,8 +138,8 @@ function checkWallCollision(player){
     return player.x<size/2 || player.x > canvas.width-size/2 || player.y < 0 || player.y > canvas.height-size
 }
 
-function collisionDiamonds(x,y,x2,y2, size){
-    return Math.abs(x-x2)<size/2 && Math.abs(y-y2)<size/2
+function collisionDiamonds(x,y,x2,y2, size1, size2){
+    return Math.abs(x-x2)<size2/2 && Math.abs((y+size1/2)-(y2+size2/2))<size2/2
 }
 
 function drawDiamond(x, y, size){
