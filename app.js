@@ -23,11 +23,13 @@ app.get("/data", (req, res)=>{
 
 app.post("/data/:id", (req, res)=>{
     let id = req.params.id; //henter fra url
-    let move = req.body.move; //henter body i request
+    let direction = req.body.direction; //henter body i request
+    let action = req.body.action;
     res.status(200).send({success: "true"}) //sender respons til klienten med status 200
     sendToScreen({
         id,
-        move
+        direction,
+        action
     }); //sender til frontend for skjermen
 });
 
@@ -46,6 +48,7 @@ app.ws("/hostWS/", (ws, req)=>{
 });
 
 function sendToScreen(data){
+    console.log(data);
     if(hostWS){
         hostWS.send(JSON.stringify(data))
     }
