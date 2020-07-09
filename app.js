@@ -46,7 +46,9 @@ app.ws("/hostWS/", (ws, req)=>{
 });
 
 function sendToScreen(data){
-    hostWS.send(JSON.stringify(data))
+    if(hostWS){
+        hostWS.send(JSON.stringify(data))
+    }
 }
 
 
