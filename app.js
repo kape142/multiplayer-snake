@@ -1,0 +1,59 @@
+let express = require("express");
+const http = require('http');
+let bodyParser = require("body-parser");
+let app = express();
+let expressWs = require('express-ws');
+
+app.use(bodyParser.json());
+'use strict';
+
+app.use(express.static(__dirname + '/public'));
+
+let port = process.env.PORT || 80;
+
+const httpServer = http.createServer(app);
+
+let expressWsServer = expressWs(app, httpServer);
+
+//Client
+
+app.get("/data", (req, res)=>{
+    res.send({data: "test"});
+});
+
+app.post("/data/:id", (req, res)=>{
+    let id = req.params.id; //henter fra url
+    let move = req.body.move; //henter body i request
+    res.status(200).send({success: "true"}) //sender respons til klienten med status 200
+    sendToScreen({
+        id,
+        move
+    }); //sender til frontend for skjermen
+});
+
+//Host
+
+let hostWS;
+
+app.ws("/hostWS/", (ws, req)=>{
+    ws.on("message",msg=>{
+        console.log (msg);
+    });
+    ws.on("close", (code, reason)=>{
+        hostWS = undefined
+    });
+    hostWS = ws
+});
+
+function sendToScreen(data){
+    hostWS.send(JSON.stringify(data))
+}
+
+
+httpServer.listen(port);
+
+console.log("Server started " + new Date().toISOString());
+
+process.on('SIGINT', function() {
+    process.exit();
+});

@@ -1,0 +1,26 @@
+{
+  "name": "multiplayer-snake",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kape142/multiplayer-snake.git"
+  },
+  "author": "kape142",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kape142/multiplayer-snake/issues"
+  },
+  "homepage": "https://github.com/kape142/multiplayer-snake#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "express-ws": "^4.0.0",
+    "npm": "^6.9.0",
+    "request": "^2.88.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}
