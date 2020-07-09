@@ -51,6 +51,14 @@ function sendToScreen(data){
     }
 }
 
+/*setInterval(()=>{
+    sendToScreen({
+        id: Math.floor(Math.random()*2),
+        direction: Math.random()>0.5?"right":"left"     ,
+        action: Math.random()>0.5?"pressed":"released",
+    })
+}, 500)*/
+
 
 httpServer.listen(port);
 
