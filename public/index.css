@@ -1,0 +1,14 @@
+body{
+    user-select: none;
+}
+button{
+    height: 90vh;
+    width:45vw;
+    border-radius: 0;
+    border: 0;
+    background-color: blue;
+}
+
+#right{
+    float:right;
+}
