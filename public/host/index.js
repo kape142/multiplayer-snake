@@ -1,4 +1,4 @@
-let ws = new WebSocket(`ws://${document.location.hostname}/hostWS`)
+let ws = new WebSocket(`wss://${document.location.hostname}/hostWS`)
 
 wsRefreshInterval = setInterval(()=>{
     ws.send("heroku refresh")
