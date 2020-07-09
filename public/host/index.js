@@ -14,8 +14,8 @@ let playerObject = {
     id: "a",
     x: 100,
     y: 100,
-    length: 2,
-    positions: [],
+    length: 15,
+    positions: [{x:100,y:100}],
     rotation: 0,
     rotspeed: 0,
     dead: false,
@@ -36,7 +36,7 @@ ws.onmessage = (message) => {
             x,
             y,
             length: 5,
-            positions: [],
+            positions: [{x,y}],
             rotation: Math.random()*Math.PI*2,
             rotspeed: 0,
             dead: false,
@@ -81,7 +81,11 @@ function gameLoop(){
     context.fillStyle = "black";
     context.fillRect(0,0,canvas.width, canvas.height)
     players.forEach(player=>{
-        checkWallCollision(player);
+        //console.log(player);
+        if(checkWallCollision(player) || checkPlayerCollision(player)){
+            player.dead = true;
+        }
+
         if(!player.dead){
             player.rotation+=player.rotspeed;
             player.x += speed*Math.cos(player.rotation);
@@ -101,21 +105,35 @@ function gameLoop(){
         }
     })
 }
-/*
+
 function checkPlayerCollision(player){
+    let collision = false;
     players.forEach(other=>{
+        if(other.dead){
+            return;
+        }
         let i = 0;
-        if(other.id ==)
+        if(other.id === player.id){
+            i++;
+        }
+        for (; i < other.length; i++) {
+            let {x, y} = other.positions[other.positions.length-1-(i*5)] || {x: -100, y: -100};
+            if(collisionDiamonds(player.x, player.y, x,y)){
+                collision = true
+            }
+        }
     })
-}*/
+    return collision
+}
 
 function checkWallCollision(player){
-    if(player.x<size/2 || player.x > canvas.width-size/2 || player.y < 0 || player.y > canvas.height-size){
-        player.dead = true;
-    }
+    return player.x<size/2 || player.x > canvas.width-size/2 || player.y < 0 || player.y > canvas.height-size
 }
 
 function collisionDiamonds(x,y,x2,y2){
+    if(Math.abs(x-x2)<size-1 && Math.abs(y-y2)<size-1){
+        console.log(x,y,x2,y2, Math.abs(x-x2), Math.abs(y-y2), Math.abs(x-x2)<size && Math.abs(y-y2)<size)
+    }
     return Math.abs(x-x2)<size/2 && Math.abs(y-y2)<size/2
 }
 
