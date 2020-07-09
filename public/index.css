@@ -1,6 +1,7 @@
 
 body{
     user-select: none;
+    -webkit-user-select: none;
 }
 button{
     height: 90vh;

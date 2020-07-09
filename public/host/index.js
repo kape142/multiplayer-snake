@@ -10,27 +10,18 @@ const speed = 2;
 const rotspeed = 0.1;
 const size = 10;
 
-let playerObject = {
-    id: "a",
-    x: 100,
-    y: 100,
-    length: 15,
-    positions: [{x:100,y:100}],
-    rotation: 0,
-    rotspeed: 0,
-    dead: false,
-    deathAnimationFrame: 0
-}
+let players = []
 
-let players = [playerObject]
+let nextRewardId = 1;
+let rewards = []
 
 ws.onmessage = (message) => {
     let data = JSON.parse(message.data);
-    console.log(data);
+    //console.log(data);
     let player = players.find(a=>a.id === data.id);
     if(!player){
-        let x = 100+Math.random()*canvas.width;
-        let y = 100+Math.random()*canvas.height
+        let x = 200+Math.random()*(canvas.width-200);
+        let y = 90+Math.random()*(canvas.height-100)
         player = {
             id: data.id,
             x,
@@ -44,8 +35,17 @@ ws.onmessage = (message) => {
         }
         players.push(player);
     }
-    player.rotspeed = rotspeed * (data.direction === "right"?1:-1) * (data.action === "pressed"?1:0);
-    console.log(rotspeed, data.direction === "right"?1:-1, data.action === "pressed"?1:0, player.rotspeed);
+    if(data.action === "released"){
+        if(data.direction === "right" && player.rotspeed > 0){
+            player.rotspeed = 0
+        }
+        if(data.direction === "left" && player.rotspeed < 0){
+            player.rotspeed = 0
+        }
+    }else{
+        player.rotspeed = rotspeed * (data.direction === "right"?1:-1)
+    }
+    //console.log(rotspeed, data.direction === "right"?1:-1, data.action === "pressed"?1:0, player.rotspeed);
 }
 
 let canvas = document.createElement("canvas");
@@ -54,39 +54,23 @@ canvas.width = 1800;
 
 window.onload = ()=>{
     document.body.appendChild(canvas);
-    document.onkeydown = event => {
-        if(event.key === "ArrowLeft"){
-            playerObject.rotspeed=-0.1
-        }
-        if(event.key === "ArrowRight"){
-            playerObject.rotspeed=0.1;
-        }
-    };
-    document.onkeyup = event => {
-        if(event.key === "ArrowLeft"){
-            playerObject.rotspeed=0;
-        }
-        if(event.key === "ArrowRight"){
-            playerObject.rotspeed=0;
-        }
-    }
 }
 let context = canvas.getContext("2d");
 
 setInterval(gameLoop, 20)
 
-setInterval(()=>playerObject.length++, 2000);
 function gameLoop(){
     context.clearRect(0,0,canvas.width, canvas.height)
     context.fillStyle = "black";
     context.fillRect(0,0,canvas.width, canvas.height)
+    refreshRewards();
     players.forEach(player=>{
-        //console.log(player);
         if(checkWallCollision(player) || checkPlayerCollision(player)){
             player.dead = true;
         }
 
         if(!player.dead){
+            checkRewardCollision(player);
             player.rotation+=player.rotspeed;
             player.x += speed*Math.cos(player.rotation);
             player.y += speed*Math.sin(player.rotation);
@@ -106,6 +90,30 @@ function gameLoop(){
     })
 }
 
+function checkRewardCollision(player){
+    rewards.forEach((reward, index)=>{
+        if(collisionDiamonds(player.x,player.y,reward.x,reward.y,size*3)){
+            player.length += 3;
+            rewards.splice(index, 1);
+        }
+    })
+}
+
+function refreshRewards(){
+    while(rewards.length < players.length){
+        let x = 200+Math.random()*(canvas.width-200);
+        let y = 70+Math.random()*(canvas.height-100)
+        rewards.push({
+            id: nextRewardId++,
+            x,
+            y
+        })
+    }
+    rewards.forEach(reward=>{
+        drawDiamond(reward.x,reward.y, size*3);
+    })
+}
+
 function checkPlayerCollision(player){
     let collision = false;
     players.forEach(other=>{
@@ -118,7 +126,7 @@ function checkPlayerCollision(player){
         }
         for (; i < other.length; i++) {
             let {x, y} = other.positions[other.positions.length-1-(i*5)] || {x: -100, y: -100};
-            if(collisionDiamonds(player.x, player.y, x,y)){
+            if(collisionDiamonds(player.x, player.y, x,y, size)){
                 collision = true
             }
         }
@@ -130,10 +138,7 @@ function checkWallCollision(player){
     return player.x<size/2 || player.x > canvas.width-size/2 || player.y < 0 || player.y > canvas.height-size
 }
 
-function collisionDiamonds(x,y,x2,y2){
-    if(Math.abs(x-x2)<size-1 && Math.abs(y-y2)<size-1){
-        console.log(x,y,x2,y2, Math.abs(x-x2), Math.abs(y-y2), Math.abs(x-x2)<size && Math.abs(y-y2)<size)
-    }
+function collisionDiamonds(x,y,x2,y2, size){
     return Math.abs(x-x2)<size/2 && Math.abs(y-y2)<size/2
 }
 
