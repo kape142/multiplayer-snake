@@ -14,8 +14,8 @@
   },
   "homepage": "https://github.com/kape142/multiplayer-snake#readme",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.3",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
     "express-ws": "^4.0.0",
     "npm": "^6.9.0",
     "request": "^2.88.0"
